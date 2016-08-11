@@ -1,0 +1,2 @@
+// Startup
+require('./core').start();
