@@ -41,13 +41,13 @@ module.exports = {
     // url: users/registration
     // params:
     // query:
-    // body: email, password
+    // body: email, password, first_name
     create: function (req, res, next) {
         var email          = req.body.email || '',
             emailCheck     = validator.isEmail(email),
             password       = req.body.password || '',
             passwordCheck  = validator.isLength(password, {min: 6, max: 60}),
-            firstName      = validator.whitelist(req.body.firstName, 'a-zA-Zа-яА-ЯёЁ') || '',
+            firstName      = validator.whitelist(req.body.first_name, 'a-zA-Zа-яА-ЯёЁ') || '',
             firstNameCheck = validator.isLength(firstName, {min: 2, max: 60});
 
         /* secondName     = validator.whitelist(req.body.secondName, 'a-zA-Zа-яА-ЯёЁ') || '',
