@@ -14,7 +14,7 @@ console:
 
 LINKS EXAPMLE
 -----------
-GET http://localhost:3000/users 
-POST http://localhost:3000/users/registration body: email, password, first_name
-POST http://localhost:3000/oauth body: grant_type, client_id, clietn_secret, username, password
-GET http://localhost:3000/users/info header: Authorization Bearer TOKEN
+* GET http://localhost:3000/users 
+* POST http://localhost:3000/users/registration body: email, password, first_name
+* POST http://localhost:3000/oauth body: grant_type, client_id, clietn_secret, username, password
+* GET http://localhost:3000/users/info header: Authorization Bearer TOKEN
