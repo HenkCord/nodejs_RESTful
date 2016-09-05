@@ -5,7 +5,7 @@ module.exports = {
      * options.limit - количество записей на одной странице
      * options.page - выбранная страница
      * options.offset - начало вывода записей (с 0, количество 30)
-     *
+     * options.column - выводимые колонки записей (по умолчанию: *)
      * @param {Object} options
      * @return {Object} options
      */
@@ -18,7 +18,8 @@ module.exports = {
         options.offset = options.offset && options.offset >= 0
             ? options.offset
             : options.limit * options.page - options.limit;
-
+        //Разрешонные для отоборажения столбцы
+        options.column = options.column ? options.column : "*";
         return options;
     }
 };
