@@ -1,12 +1,12 @@
 var oauth2orize       = require('oauth2orize'),
     passport          = require('passport'),
     crypto            = require('crypto'),
-    config            = require('./config'),
-    UsersModel        = require('./models').UsersModel,
-    AccessTokenModel  = require('./models').AccessTokenModel,
-    RefreshTokenModel = require('./models').RefreshTokenModel,
-    AuthHelpers       = require('./utils/AuthHelpers');
-
+    config            = require('./../config/index'),
+    UsersModel        = require('./../models/index').UsersModel,
+    AccessTokenModel  = require('./../models/index').AccessTokenModel,
+    RefreshTokenModel = require('./../models/index').RefreshTokenModel,
+    Response          = require('./../utils/ResponseJSON'),
+    AuthHelpers       = require('./../utils/AuthHelpers');
 
 // create OAuth 2.0 server
 var server = oauth2orize.createServer();
@@ -61,7 +61,7 @@ server.exchange(oauth2orize.exchange.refreshToken(function (client, refreshToken
             return done(err);
         }
         if (!token) {
-            return done(null, false);
+            return done(null, false, {message: "Unknown Token"});
         }
 
         UsersModel.findOne({userId: token.userId}, function (err, user) {
@@ -69,7 +69,7 @@ server.exchange(oauth2orize.exchange.refreshToken(function (client, refreshToken
                 return done(err);
             }
             if (!user) {
-                return done(null, false);
+                return done(null, false, {message: "Unknown User"});
             }
 
             RefreshTokenModel.removeOne({userId: user.userId, clientId: client.clientId}, function (err) {
@@ -106,13 +106,38 @@ server.exchange(oauth2orize.exchange.refreshToken(function (client, refreshToken
 
 
 // token endpoint
-exports.authorize = [
-    passport.authenticate(['basic', 'oauth2-client-password'], {session: false}),
+exports.authorization = [
+    function (req, res, next) {
+        passport.authenticate(['basic', 'oauth2-client-password'], {session: false}, function (err, refreshToken, info) {
+            if (err) {
+                return next(err);
+            }
+            if (!refreshToken) {
+                return Response.error(res,403,info);
+            }
+            next();
+        })(req, res, next);
+    },
     server.token(),
     server.errorHandler()
 ];
 
-// check token
+// check token and set output errors
 exports.authenticate = [
-    passport.authenticate('bearer', {session: false})
+    function (req, res, next) {
+        passport.authenticate('bearer', {session: false}, function (err, user, info) {
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                return Response.error(res,401,info);
+            }
+            req.login(user, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                return console.log('Hello');
+            });
+        })(req, res, next);
+    }
 ];

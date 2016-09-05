@@ -2,14 +2,14 @@
  * Используется для описания «стратегии» passport.js
  */
 
-var config                 = require('./config'),
+var config                 = require('./../config/index'),
     passport               = require('passport'),
     BasicStrategy          = require('passport-http').BasicStrategy,
     ClientPasswordStrategy = require('passport-oauth2-client-password').Strategy,
     BearerStrategy         = require('passport-http-bearer').Strategy,
-    ClientsModel           = require('./models').ClientsModel,
-    UsersModel             = require('./models').UsersModel,
-    AccessTokenModel       = require('./models').AccessTokenModel;
+    ClientsModel           = require('./../models/index').ClientsModel,
+    UsersModel             = require('./../models/index').UsersModel,
+    AccessTokenModel       = require('./../models/index').AccessTokenModel;
 
 
 /**
@@ -63,8 +63,8 @@ passport.use(new BearerStrategy(
 
             console.log('new BearerStrategy');
 
-            if (err) return done(err, false, {message: 'Unknown user'});
-            if (!token) return done(null, false, {message: 'Unknown user'});
+            if (err) return done(err, false);
+            if (!token) return done(null, false, { message: 'Unknown token'});
             if (Math.round((Date.now() - token.created) / 1000) > config.options.tokenLife) {
                 AccessTokenModel.removeOne({token: accessToken}, function (err) {
                     if (err) return done(err);
@@ -75,8 +75,7 @@ passport.use(new BearerStrategy(
             UsersModel.findOne({userId: token.userId}, function (err, user) {
                 if (err) return done(err);
                 if (!user) return done(null, false, {message: 'Unknown user'});
-                var info = {scope: '*'};
-                done(null, user, info);
+                done(null, user, { scope: 'read' });
             });
         });
     }
