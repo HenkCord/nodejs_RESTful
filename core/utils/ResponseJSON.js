@@ -1,13 +1,32 @@
 var ResponseJSON;
 
 /**
- * Response status code and ready json row.
- *
- * @param {Object} res
- * @param {Number} statusCode
- * @param {String} data
- * @param {Function} callback
- *
+ * Response status code and ready json row
+
+ EXAMPLES
+
+ success - результат удачного выполнения
+ {
+     response: {
+         DATA: DATA
+     }
+ }
+
+ warning - Предупреждения, например о существующем пользователе с таким именем
+ {
+    response: {
+        warning: 1,
+        warningMessage: "User with the same name already exists"
+    }
+ }
+
+ error - Ошибки
+ {
+    response: {
+        error: 401,
+        errorMessage: "Unauthorized"
+    }
+ }
  */
 
 ResponseJSON = {
@@ -31,22 +50,19 @@ ResponseJSON = {
     },
     warning: function (res, warningCode, data, callback) {
         var _data = {};
-        _data.warning = 1;
-        _data.warningCode = warningCode || 1;
-        _data.warningContent = data || "";
+        _data.warning = warningCode || 1;
+        _data.warningMessage = data || "";
         layout(res, 200, _data, callback);
     },
     warningStatusCode: function (res, warningCode, statusCode, data, callback) {
         var _data = {};
-        _data.warning = 1;
-        _data.warningCode = warningCode || 1;
-        _data.warningContent = data || "";
+        _data.warning = warningCode || 1;
+        _data.warningMessage = data || "";
         layout(res, statusCode, _data, callback);
     },
     error: function (res, statusCode, data, callback) {
         var _data = {};
-        _data.error = 1;
-        _data.errorCode = statusCode;
+        _data.error = statusCode;
         _data.errorMessage = errSelect(statusCode);
         /*Вывод возможных ошибок*/
         if (process.env.SERVER_MODE !== 'production' && data)
