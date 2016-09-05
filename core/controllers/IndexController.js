@@ -12,8 +12,7 @@ module.exports = {
             date: new Date(),
             description: 'BackEnd by Artyom',
             versions: [
-                "/v1/",
-                "/v1.1/"
+                "v1"
             ]
         });
     }
