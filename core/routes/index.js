@@ -1,31 +1,41 @@
 var UsersController = require('../controllers').UsersController,
+    IndexController = require('../controllers').IndexController,
     Response        = require('../utils/ResponseJSON'),
-    passport        = require('passport'),
     config          = require('../config'),
-    oauth2          = require('../oauth2');
+    oauth2          = require('../handlers/oauth2');
+
+/*
+ OAUTH2
+
+ authorization
+ http POST http://localhost:3000/auth grant_type=password client_id=1 client_secret=123 username=leo240532@yandex.ru password=123456
+
+ authorization refresh token
+ http POST http://localhost:3000/auth grant_type=refresh_token client_id=1 client_secret=123 refresh_token=TOKEN
+
+ authenticate user
+ http GET http://localhost:3000/users/profile Authorization:'Bearer TOKEN'
+
+ */
 
 module.exports = function (app) {
 
-    app.get('/', function (req, res, next) {
-        res.status(200).json({
-            response: {users: 'list'}
-        });
-    });
-
+    app.get('/', IndexController.main);
+    app.post('/auth', oauth2.authorization);
     app.get('/users', UsersController.find);
     app.get('/users/id:userId', UsersController.findById);
     app.post('/users/registration', UsersController.create);
     app.post('/users/update/id:userId', UsersController.updateById);
     app.post('/users/remove/id:userId', UsersController.removeById);
-    app.post('/users/info', oauth2.authenticate, UsersController.other);
+
+    app.get('/users/profile', oauth2.authenticate, UsersController.other);
 
     app.get('/config', function (req, res, next) {
         Response.success(res, config);
     });
 
-    app.post('/oauth', oauth2.authorize);
 
-    app.get('/api/userInfo', passport.authenticate('bearer', {session: false}),
+    app.get('/api/userInfo', oauth2.authenticate,
         function (req, res) {
             // req.authInfo is set using the `info` argument supplied by
             // `BearerStrategy`.  It is typically used to indicate scope of the token,
