@@ -1,8 +1,8 @@
 module.exports = {
     // Production
     // Configure your URL and mail settings here
-    // *NIX: NODE_ENV=production node app.js
-    // Windows SET NODE_ENV=production node app.js
+    // *NIX: SERVER_MODE=production node app.js
+    // Windows SET SERVER_MODE=production node app.js
     production: {
         url: 'http://example.com',
         //gzip compression
