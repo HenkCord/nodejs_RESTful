@@ -4,6 +4,7 @@ var express    = require('express'),
     server     = require('./app-server'),
     config     = require('./config'),
     routes     = require('./routes'),
+    oauth      = require('./handlers/authStrategy'),
     models     = require('./models'),
     bodyParser = require('body-parser'),
     passport   = require('passport'),
@@ -43,12 +44,12 @@ init = {
             app.use(bodyParser.json());
             // init passport for auth
             app.use(passport.initialize());
-            // auth strategy
-            require('./oauth');
+            // oauth strategy
+            oauth;
             // Routing
             routes(app);
 
-            // ## Create new Object
+            // Create new Object
             return new server(app);
         }).then(function (Server) {
             // Start handle our server instance.
