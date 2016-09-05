@@ -8,8 +8,9 @@ module.exports = {
      * options.column - выводимые колонки записей (по умолчанию: *)
      * @param {Object} options
      * @return {Object} options
+     * @param {Function} cb
      */
-    options: function (options) {
+    options: function (options, cb) {
         //количество записей на одной странице
         options.limit = options.limit >= 0 ? options.limit : 30;
         //страница
@@ -20,6 +21,8 @@ module.exports = {
             : options.limit * options.page - options.limit;
         //Разрешонные для отоборажения столбцы
         options.column = options.column ? options.column : "*";
+        //Вызов функции
+        options.callback = typeof cb == "function" ? cb : function(){};
         return options;
     }
 };
