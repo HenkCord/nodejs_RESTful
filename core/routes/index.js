@@ -1,7 +1,6 @@
-var UsersController = require('../controllers').UsersController,
-    IndexController = require('../controllers').IndexController,
+var IndexController = require('../controllers').IndexController,
+    RoutesV1          = require('./RoutesV1'),
     Response        = require('../utils/ResponseJSON'),
-    config          = require('../config'),
     oauth2          = require('../handlers/oauth2');
 
 /*
@@ -19,46 +18,6 @@ var UsersController = require('../controllers').UsersController,
  */
 
 module.exports = function (app) {
-
     app.get('/', IndexController.main);
-    app.post('/auth', oauth2.authorization);
-    app.get('/users', UsersController.find);
-    app.get('/users/id:userId', UsersController.findById);
-    app.post('/users/registration', UsersController.create);
-    app.post('/users/update/id:userId', UsersController.updateById);
-    app.post('/users/remove/id:userId', UsersController.removeById);
-
-    app.get('/users/profile', oauth2.authenticate, UsersController.other);
-
-    app.get('/config', function (req, res, next) {
-        Response.success(res, config);
-    });
-
-
-    app.get('/api/userInfo', oauth2.authenticate,
-        function (req, res) {
-            // req.authInfo is set using the `info` argument supplied by
-            // `BearerStrategy`.  It is typically used to indicate scope of the token,
-            // and used in access control checks.  For illustrative purposes, this
-            // example simply returns the scope in the response.
-            Response.success(res, {userId: req.user.userId, email: req.user.email, scope: req.authInfo.scope});
-        }
-    );
-    /*
-     app.get('/ErrorExample', function (req, res, next) {
-     next(new Error('Random error!'));
-     });
-     */
-    app.use(function (req, res, next) {
-        Response.error(res, 404, null, function () {
-            console.error('Not found URL: ' + req.url);
-        });
-    });
-
-    app.use(function (err, req, res, next) {
-        Response.error(res, err.status || 500, err.message, function () {
-            console.error('Internal error(' + res.statusCode + '): ' + err.message + ' (' + req.url + ')');
-        });
-    });
-
+    app.use('/v1', RoutesV1);
 };
