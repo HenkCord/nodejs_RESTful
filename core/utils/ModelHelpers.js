@@ -13,12 +13,12 @@ module.exports = {
      */
     options: function (options, cb) {
         if(typeof options == "function"){
-            cb = options;
+            var callback = options;
             options = {};
-            options.callback = cb;
+            options.callback = callback;
         } else {
             //Вызов функции
-            options.callback = typeof cb == "function" ? cb : function(){};
+            options.callback = cb && typeof cb == "function" ? cb : Console.log('Error');
         }
         //количество записей на одной странице
         options.limit = options.limit && options.limit >= 0 ? options.limit : 30;
