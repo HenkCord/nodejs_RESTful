@@ -24,6 +24,7 @@ var config                 = require('./../config/index'),
  * the specification, in practice it is quite common.
  */
 passport.use(new BasicStrategy(
+    {usernameField: 'email', passwordField: 'password'},
     function (username, password, done) {
         ClientsModel.findOne({clientId: username}, function (err, client) {
 
@@ -72,7 +73,7 @@ passport.use(new BearerStrategy(
                 return done(null, false, {message: 'Token expired'});
             }
 
-            UsersModel.findOne({userId: token.userId}, function (err, user) {
+            UsersModel.findOne({userId: token.userId}, {column: ["userId", "email", "firstName", "secondName", "middleName"]}, function (err, user) {
                 if (err) return done(err);
                 if (!user) return done(null, false, {message: 'Unknown user'});
                 done(null, user, { scope: 'read' });
